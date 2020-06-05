@@ -18,6 +18,7 @@ exclude = [
     "bracket-noise",
     "bracket-pathfinding",
     "bracket-random",
+    "bracket-script",
     "bracket-terminal",
     "rltk",
     "screenshots"
@@ -41,6 +42,7 @@ bracket-geometry = { version = "~0.8.1" }
 bracket-noise = { version = "~0.8.1" }
 bracket-pathfinding = { version = "~0.8.1" }
 bracket-random = { version = "~0.8.0", features = [ "parsing" ] }
+bracket-script = { path = "bracket-script", version = "0.0.1" }
 bracket-terminal = { version = "~0.8.1", default-features = false }
 
 [workspace]
@@ -51,6 +53,7 @@ members = [
     "bracket-noise",
     "bracket-pathfinding",
     "bracket-random",
+    "bracket-script",
     "bracket-terminal",
     "rltk"
 ]

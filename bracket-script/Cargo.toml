@@ -1,0 +1,17 @@
+[package]
+name = "bracket-script"
+version = "0.0.1"
+authors = ["Rodrigo Oliveira Campos <rodrigo.redcode@gmail.com>", "Pablo Diego Silva da Silva <pablodiegosds@gmail.com"]
+edition = "2018"
+description = "Scripting system for multiple languages"
+keywords = ["game", "engine", "scripting", "script", "rltk"]
+categories = ["scripting", "scripting::engine"]
+license = "MIT/Apache-2.0"
+
+
+[dependencies]
+libc = "0.2.0"
+
+[build-dependencies]
+cc = "1.0"
+pkg-config = "0.3"
