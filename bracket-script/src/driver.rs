@@ -7,10 +7,12 @@ use std::path::PathBuf;
 extern {
     fn call_python(path: *const c_char);
     fn call_lua(path: *const c_char);
+    fn call_lua_return(path: *const c_char) -> *const c_char;
 }
 
 pub trait Driver {
     fn exec_script(path: PathBuf) -> Result<(), ()>;
+    fn exec_script_return(path: PathBuf) -> *const c_char;
 }
 
 pub struct PythonDriver;
@@ -27,6 +29,10 @@ impl Driver for PythonDriver {
         }
         Ok(())
     }
+
+    fn exec_script_return(path: PathBuf) -> *const c_char {
+        return CString::new("aa").expect("Fail").as_ptr();
+    }
 }
 
 pub struct LuaDriver;
@@ -42,6 +48,17 @@ impl Driver for LuaDriver {
             );
         }
         Ok(())
+    }
+
+    fn exec_script_return(path: PathBuf) -> *const c_char { 
+        let mut r: *const c_char;
+        unsafe {
+            let script_path = String::from(path.to_str().unwrap());
+             r = call_lua_return(
+                CString::new(script_path).expect("CString::new failed").as_ptr()
+            );
+        }
+        r
     }
 }
 
