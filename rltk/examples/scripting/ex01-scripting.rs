@@ -7,6 +7,7 @@ use bracket_script::driver::Driver;
 use rltk::prelude::*;
 use std::path::PathBuf;
 use std::slice;
+use std::env;
 
 struct State {
     pub script_path: PathBuf
@@ -59,9 +60,11 @@ fn main() -> RltkError {
     .with_fps_cap(100.0)
     .build()?;
     
+    let cur_path = env::current_dir()?;
+    let script_path = cur_path.join("examples/scripting/hello.lua");
+
     // Now we create an empty state object.
-    let mut gs: State = State {script_path : PathBuf::new()};
-    gs.script_path.push("/home/shammyz/Documents/repos/bracket-lib/rltk/examples/scripting/hello.lua");
+    let mut gs: State = State {script_path : script_path};
 
     // Call into RLTK to run the main loop. This handles rendering, and calls back into State's tick
     // function every cycle. The box is needed to work around lifetime handling.

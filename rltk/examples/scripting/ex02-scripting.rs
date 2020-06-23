@@ -11,6 +11,7 @@ use bracket_script::driver::Driver;
 use rltk::prelude::*;
 use std::path::PathBuf;
 use std::slice;
+use std::env;
 
 struct State {
     pub script_path: PathBuf
@@ -66,12 +67,12 @@ fn main() -> RltkError {
     let universe = Universe::new();
     let mut world = universe.create_world();
     let mut resources = Resources::default();
-    
-    let lua_scripts = "/home/shammyz/Documents/repos/bracket-lib/rltk/examples/scripting/lua/";
+    let cur_path = env::current_dir()?;
+    let lua_scripts = cur_path.join("examples/scripting/lua");
 
-    let scripts = script::Script::load_multiple(resources, lua_scripts);
+    let scripts = script::Script::load_multiple(resources, lua_scripts.to_str().unwrap());
 
-    println!("{}", scripts[0].clone().to_utf8());
+    // println!("{}", scripts[0].clone().to_utf8());
 
     // let systems = vec![
     //    Schedule::builder()
@@ -81,9 +82,9 @@ fn main() -> RltkError {
 
 
     // Now we create an empty state object.
-    let mut gs: State = State {script_path : PathBuf::new()};
-    gs.script_path.push("/home/shammyz/Documents/repos/bracket-lib/rltk/examples/scripting/hello.lua");
-
+    let mut script_path = cur_path.join("examples/scripting/hello.lua");
+    println!("{}",script_path.display());
+    let mut gs: State = State {script_path : script_path};
     // Call into RLTK to run the main loop. This handles rendering, and calls back into State's tick
     // function every cycle. The box is needed to work around lifetime handling.
     rltk::main_loop(context, gs)
