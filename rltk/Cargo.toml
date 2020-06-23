@@ -24,6 +24,7 @@ amethyst_engine_vulkan = [ "bracket-lib/amethyst_engine_vulkan" ]
 amethyst_engine_metal = [ "bracket-lib/amethyst_engine_metal" ]
 
 [dependencies]
+legion = { version = "0.2.4" }
 bracket-lib = { version = "~0.8.1", default-features = false }
 bracket-script = {version = "0.0.1" ,path="../bracket-script/"}
 
@@ -100,3 +101,7 @@ path = "examples/ex17-textsprites.rs"
 [[example]]
 name = "18"
 path = "examples/scripting/ex01-scripting.rs"
+
+[[example]]
+name = "19"
+path = "examples/scripting/ex02-scripting.rs"
