@@ -4,8 +4,6 @@ mod driver;
 
 use driver::*;
 
-use aal::asd
-
 // driver is only a string for now
 pub fn build(driver: Driver) -> Box<(dyn Schedulable + 'static)> {
     SystemBuilder::new("scripting")

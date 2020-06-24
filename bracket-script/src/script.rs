@@ -6,8 +6,8 @@ use legion::prelude::Resources;
 
 #[derive(Clone)]
 pub struct Script {
-    path: PathBuf,
-    bytes: Vec<u8>
+    pub path: PathBuf,
+    pub bytes: Vec<u8>
 }
 
 impl Script {

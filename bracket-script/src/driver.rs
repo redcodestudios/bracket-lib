@@ -2,21 +2,58 @@ use std::ffi::CString;
 use std::os::raw::c_char;
 use std::path::PathBuf;
 
+use std::sync::{Arc, Mutex};
+
+#[repr(C)]
+#[derive(Clone)]
+pub struct lua_State { private: [u8; 0] }
+
+
+// Lua C API functions
+extern {
+    fn luaL_newstate() -> *mut lua_State;
+    fn lua_close(l: *mut lua_State);
+    fn luaL_openlibs(l: *mut lua_State);
+}
 
 // C driver functions
 extern {
     fn call_python(path: *const c_char);
     fn call_lua(path: *const c_char);
     fn call_lua_return(path: *const c_char) -> *const c_char;
+    fn call_lua_bytes(l: *mut lua_State, source: *const u8, size: usize);
 }
 
+#[derive(Clone)]
+pub struct LuaVM {
+    state: Arc<Mutex<*mut lua_State>>
+}
+
+impl LuaVM {
+    fn clean_state(&mut self) {
+        unsafe {
+            let mut s = luaL_newstate();
+            luaL_openlibs(s);
+            let mut old_state = self.state.lock().unwrap();
+            lua_close(*old_state);
+            *old_state = s;
+        }
+    }
+}
+
+
 pub trait Driver {
+    fn new() -> Self;
     fn exec_script(path: PathBuf) -> Result<(), ()>;
     fn exec_script_return(path: PathBuf) -> *const c_char;
 }
 
 pub struct PythonDriver;
 impl Driver for PythonDriver {
+    fn new() -> Self {
+        Self{}
+    }
+
     fn exec_script(path: PathBuf) -> Result<(), ()>{
         unsafe{
             let script_path = String::from(path.to_str().unwrap());
@@ -35,8 +72,26 @@ impl Driver for PythonDriver {
     }
 }
 
-pub struct LuaDriver;
-impl Driver for LuaDriver {
+impl LuaVM {
+    pub fn exec_bytes(mut self, source: Vec<u8>) {
+         unsafe {
+            &self.clean_state();
+            let s = *Arc::try_unwrap(self.state).unwrap_err().lock().unwrap();
+            call_lua_bytes(s, source.as_ptr(), source.len());
+        }
+    }
+}
+
+impl Driver for LuaVM {
+    fn new() -> Self {
+        unsafe {
+            let s = luaL_newstate();
+            luaL_openlibs(s);
+            Self { state: Arc::new(Mutex::new(s)) }
+        }
+    }
+   
+
     fn exec_script(path: PathBuf) -> Result<(), ()> {
         unsafe{
             let script_path = String::from(path.to_str().unwrap());

@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 
-void test_call_lua(lua_State* state, const unsigned char* source, size_t size) {
+void call_lua_bytes(lua_State* state, const unsigned char* source, size_t size) {
     if(luaL_loadbuffer(state, source, size, "script xaaab")){
         fprintf(stderr, "Lua `ERROR`: `%s\n`", lua_tostring(state, -1));
     }
