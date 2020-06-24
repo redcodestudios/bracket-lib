@@ -46,6 +46,7 @@ pub trait Driver {
     fn new() -> Self;
     fn exec_script(path: PathBuf) -> Result<(), ()>;
     fn exec_script_return(path: PathBuf) -> *const c_char;
+    fn exec_bytes(self, source: Vec<u8>);
 }
 
 pub struct PythonDriver;
@@ -54,6 +55,8 @@ impl Driver for PythonDriver {
         Self{}
     }
 
+    fn exec_bytes(mut self, source: Vec<u8>){}
+    
     fn exec_script(path: PathBuf) -> Result<(), ()>{
         unsafe{
             let script_path = String::from(path.to_str().unwrap());
@@ -72,17 +75,16 @@ impl Driver for PythonDriver {
     }
 }
 
-impl LuaVM {
-    pub fn exec_bytes(mut self, source: Vec<u8>) {
+unsafe impl std::marker::Send for LuaVM{}
+unsafe impl std::marker::Sync for LuaVM{}
+impl Driver for LuaVM {
+    fn exec_bytes(mut self, source: Vec<u8>) {
          unsafe {
             &self.clean_state();
             let s = *Arc::try_unwrap(self.state).unwrap_err().lock().unwrap();
             call_lua_bytes(s, source.as_ptr(), source.len());
         }
     }
-}
-
-impl Driver for LuaVM {
     fn new() -> Self {
         unsafe {
             let s = luaL_newstate();

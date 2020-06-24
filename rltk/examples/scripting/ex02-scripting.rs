@@ -4,7 +4,7 @@ rltk::add_wasm_support!();
 
 use legion::prelude::*;
 
-use bracket_script::prelude::{script::*, driver::*};
+use bracket_script::prelude::{script::*, driver::*, script_system};
 // use bracket_script::driver::Driver;
 
 use rltk::prelude::*;
@@ -12,18 +12,29 @@ use std::path::PathBuf;
 use std::slice;
 use std::env;
 
+
 struct State {
     pub scripts: Vec<Script>,
     pub lua_vm: LuaVM,
+    pub systems: Vec<Schedule>,
+    // pub resources: Resources,
+    pub world: World,
+}
+impl State{
+    fn run_systems(&mut self) {
+        for systems in self.systems.iter_mut() {
+            // systems.execute(&mut self.world, &mut self.resources);
+        }
+    }
 }
 
 impl GameState for State {
     fn tick(&mut self, ctx: &mut Rltk) {
         
-        for s in &self.scripts {
-            self.lua_vm.clone().exec_bytes(s.bytes.clone());
-        }
-
+        // for s in &self.scripts {
+        //     self.lua_vm.clone().exec_bytes(s.bytes.clone());
+        // }
+        // self.run_systems();
         // let str = vec![1,1];
         // let str = driver::LuaVM::exec_bytes(self.script_path.clone());
         let col1 = RGB::named(rltk::CYAN);
@@ -77,15 +88,12 @@ fn main() -> RltkError {
     let cur_path = env::current_dir()?;
     let lua_scripts = cur_path.join("examples/scripting/lua");
 
-    // let scripts = script::Script::load_multiple(resources, lua_scripts.to_str().unwrap());
-
-    // println!("{}", scripts[0].clone().to_utf8());
-
-    // let systems = vec![
-    //    Schedule::builder()
-    //        .add_system(script_system(LuaDriver)::build())
-    //        .build()
-    // ]
+   
+    let systems = vec![
+       Schedule::builder()
+           .add_system(script_system::DriverHolder::<LuaVM>::build())
+           .build()
+    ];
 
 
     // Now we create an empty state object.
@@ -94,6 +102,9 @@ fn main() -> RltkError {
     let mut gs: State = State { 
         scripts: Script::load_multiple(resources, lua_scripts.to_str().unwrap()),
         lua_vm: LuaVM::new(),
+        systems: systems,
+        // resources: resources,
+        world: world,
     };
     // Call into RLTK to run the main loop. This handles rendering, and calls back into State's tick
     // function every cycle. The box is needed to work around lifetime handling.
