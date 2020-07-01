@@ -89,15 +89,16 @@ fn main() -> RltkError {
     let cur_path = env::current_dir()?;
     let lua_scripts = cur_path.join("examples/scripting/lua");
 
-   
+    let mut scripts = Script::load_all(&lua_scripts);
+
     let systems = vec![
-       Schedule::builder()
-           .add_system(script_system::DriverHolder::<LuaVM>::build())
-           .build()
+        Schedule::builder()
+            .add_system(script_system::DriverHolder::<LuaVM>::build(&mut scripts))
+            .build()
     ];
 
-    resources.insert(Script::load_all(&lua_scripts));
-        
+    resources.insert(scripts);
+
     // Now we create an empty state object.
     // let mut script_path = cur_path.join("examples/scripting/hello.lua");
     // println!("{}",script_path.display());

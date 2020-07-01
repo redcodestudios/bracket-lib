@@ -1,1 +1,3 @@
-print("Hello4\n")
+function setup()
+    print("setup 4 called.");
+end

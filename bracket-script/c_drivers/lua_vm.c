@@ -46,18 +46,16 @@ char* call_lua_return(const char* script) {
     return str_from_script;
 }
 
-void call_on_start_lua(const char* script) {
-    lua_State* L;
-    L = luaL_newstate();
-    luaL_openlibs(L);
-
-    luaL_dofile(L, script);
-     
-    lua_getglobal(L, "start");
-
-    if(lua_pcall(L, 0, 0, 0) != 0) {
-        printf("error running function `on_start`: %s\n", lua_tostring(L, -1));
+void call_setup_lua(lua_State* state, const unsigned char* source, size_t size, const char* script) {
+   
+    if (luaL_loadbuffer(state, source, size, script) || lua_pcall(state, 0, 0, 0)) {
+        printf("error buffer: %s", lua_tostring(state, -1));
+        return -1;
     }
+    int x = lua_getglobal(state, "setup");
+    fprintf(stderr, "getglobal: %d\n", x);
 
-    lua_close(L);
+    if(lua_pcall(state, 0, 1, 0) != 0) {
+        printf("error running function `setup`: %s\n", lua_tostring(state, -1));
+    }
 }

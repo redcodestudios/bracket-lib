@@ -22,6 +22,7 @@ extern {
     fn call_lua(path: *const c_char);
     fn call_lua_return(path: *const c_char) -> *const c_char;
     fn call_lua_bytes(l: *mut lua_State, source: *const u8, size: usize);
+    fn call_setup_lua(l: *mut lua_State, source: *const u8, size: usize, script_name: *const c_char);
 }
 
 #[derive(Clone)]
@@ -47,6 +48,8 @@ pub trait Driver {
     fn exec_script(path: PathBuf) -> Result<(), ()>;
     fn exec_script_return(path: PathBuf) -> *const c_char;
     fn exec_bytes(self, source: Vec<u8>);
+    fn exec_script_setup(self, source: Vec<u8>);
+    fn exec_script_update(self, source: Vec<u8>);
 }
 
 pub struct PythonDriver;
@@ -56,6 +59,8 @@ impl Driver for PythonDriver {
     }
 
     fn exec_bytes(mut self, source: Vec<u8>){}
+    fn exec_script_setup(mut self, source: Vec<u8>) {}
+    fn exec_script_update(mut self, source: Vec<u8>) {}
     
     fn exec_script(path: PathBuf) -> Result<(), ()>{
         unsafe{
@@ -69,7 +74,7 @@ impl Driver for PythonDriver {
         }
         Ok(())
     }
-
+    
     fn exec_script_return(path: PathBuf) -> *const c_char {
         return CString::new("aa").expect("Fail").as_ptr();
     }
@@ -79,12 +84,22 @@ unsafe impl std::marker::Send for LuaVM{}
 unsafe impl std::marker::Sync for LuaVM{}
 impl Driver for LuaVM {
     fn exec_bytes(mut self, source: Vec<u8>) {
-         unsafe {
+        unsafe {
             &self.clean_state();
             let s = *Arc::try_unwrap(self.state).unwrap_err().lock().unwrap();
             call_lua_bytes(s, source.as_ptr(), source.len());
         }
     }
+    
+    fn exec_script_update(mut self, source: Vec<u8>) {}
+    fn exec_script_setup(mut self, source: Vec<u8>) {
+        unsafe {
+            &self.clean_state();
+            let s = *Arc::try_unwrap(self.state).unwrap_err().lock().unwrap();
+            call_setup_lua(s, source.as_ptr(), source.len(), CString::new("xaab").expect("CString::new failed").as_ptr());
+        }
+    }
+    
     fn new() -> Self {
         unsafe {
             let s = luaL_newstate();
@@ -92,8 +107,8 @@ impl Driver for LuaVM {
             Self { state: Arc::new(Mutex::new(s)) }
         }
     }
-   
-
+    
+    
     fn exec_script(path: PathBuf) -> Result<(), ()> {
         unsafe{
             let script_path = String::from(path.to_str().unwrap());

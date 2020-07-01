@@ -3,9 +3,13 @@ use std::fs;
 use std::io::Read;
 
 #[derive(Clone)]
+pub enum ScriptState {Loaded, Unloaded}
+
+#[derive(Clone)]
 pub struct Script {
     pub path: PathBuf,
-    pub bytes: Vec<u8>
+    pub bytes: Vec<u8>,
+    pub state: ScriptState,
 }
 
 impl<'a> Script {
@@ -17,7 +21,8 @@ impl<'a> Script {
 
         Self {
             path: PathBuf::from(path_str),
-            bytes: bytes_buffer 
+            bytes: bytes_buffer,
+            state: ScriptState::Unloaded
         }
     }
 
