@@ -10,10 +10,12 @@ impl <D: std::clone::Clone + 'static + Driver + std::marker::Send + std::marker:
     pub fn build() -> Box<(dyn Schedulable + 'static)> {
         let driver_instance = D::new();
         SystemBuilder::new("scripting")
-            .read_resource::<Script>()
+            .read_resource::<Vec<Script>>()
             .build(
-                move |_commands, mut world, script, query| {
-                    driver_instance.clone().exec_bytes((**script).bytes.clone()); 
+                move |_commands, mut world, scripts, query| {
+                    for s in &**scripts{
+                        driver_instance.clone().exec_bytes(s.bytes.clone()); 
+                    }
                 })
     }
 }

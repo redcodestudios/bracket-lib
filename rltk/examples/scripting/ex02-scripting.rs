@@ -14,16 +14,16 @@ use std::env;
 
 
 struct State {
-    pub scripts: Vec<Script>,
+    // pub scripts: Vec<Script>,
     pub lua_vm: LuaVM,
     pub systems: Vec<Schedule>,
-    // pub resources: Resources,
+    pub resources: Resources,
     pub world: World,
 }
 impl State{
     fn run_systems(&mut self) {
         for systems in self.systems.iter_mut() {
-            // systems.execute(&mut self.world, &mut self.resources);
+            systems.execute(&mut self.world, &mut self.resources);
         }
     }
 }
@@ -34,7 +34,7 @@ impl GameState for State {
         // for s in &self.scripts {
         //     self.lua_vm.clone().exec_bytes(s.bytes.clone());
         // }
-        // self.run_systems();
+        self.run_systems();
         // let str = vec![1,1];
         // let str = driver::LuaVM::exec_bytes(self.script_path.clone());
         let col1 = RGB::named(rltk::CYAN);
@@ -96,15 +96,15 @@ fn main() -> RltkError {
            .build()
     ];
 
-
+    resources.insert(Script::load_all(&lua_scripts));
+        
     // Now we create an empty state object.
     // let mut script_path = cur_path.join("examples/scripting/hello.lua");
     // println!("{}",script_path.display());
     let mut gs: State = State { 
-        scripts: Script::load_all(&lua_scripts),
         lua_vm: LuaVM::new(),
         systems: systems,
-        // resources: resources,
+        resources: resources,
         world: world,
     };
     // Call into RLTK to run the main loop. This handles rendering, and calls back into State's tick
