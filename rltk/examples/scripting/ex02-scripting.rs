@@ -85,6 +85,7 @@ fn main() -> RltkError {
     let universe = Universe::new();
     let mut world = universe.create_world();
     let mut resources = Resources::default();
+    
     let cur_path = env::current_dir()?;
     let lua_scripts = cur_path.join("examples/scripting/lua");
 
@@ -100,7 +101,7 @@ fn main() -> RltkError {
     // let mut script_path = cur_path.join("examples/scripting/hello.lua");
     // println!("{}",script_path.display());
     let mut gs: State = State { 
-        scripts: Script::load_multiple(resources, lua_scripts.to_str().unwrap()),
+        scripts: Script::load_all(&lua_scripts),
         lua_vm: LuaVM::new(),
         systems: systems,
         // resources: resources,
