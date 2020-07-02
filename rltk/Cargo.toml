@@ -105,3 +105,7 @@ path = "examples/scripting/ex01-scripting.rs"
 [[example]]
 name = "19"
 path = "examples/scripting/ex02-scripting.rs"
+
+[[example]]
+name = "20"
+path = "examples/pong/main.rs"
