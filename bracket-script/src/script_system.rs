@@ -26,7 +26,7 @@ impl <D: std::clone::Clone + 'static + Driver + std::marker::Send + std::marker:
                     for s in &**scripts{
                         match s.state {
                             // TODO: exec_script_update is a empty function for now
-                            // ScriptState::Loaded => driver_instance.clone().exec_script_update(s.bytes.clone()),
+                            ScriptState::Loaded => driver_instance.clone().exec_script_update(s.bytes.clone()),
                             _ => print!("Trying to run an unloaded script!"),
                         }
                          

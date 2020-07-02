@@ -23,6 +23,7 @@ extern {
     fn call_lua_return(path: *const c_char) -> *const c_char;
     fn call_lua_bytes(l: *mut lua_State, source: *const u8, size: usize);
     fn call_setup_lua(l: *mut lua_State, source: *const u8, size: usize, script_name: *const c_char);
+    fn call_update_lua(l: *mut lua_State, source: *const u8, size: usize, script_name: *const c_char);
 }
 
 #[derive(Clone)]
@@ -91,7 +92,13 @@ impl Driver for LuaVM {
         }
     }
     
-    fn exec_script_update(mut self, source: Vec<u8>) {}
+    fn exec_script_update(mut self, source: Vec<u8>) {
+        unsafe {
+            &self.clean_state();
+            let s = *Arc::try_unwrap(self.state).unwrap_err().lock().unwrap();
+            call_update_lua(s, source.as_ptr(), source.len(), CString::new("xaab").expect("CString::new failed").as_ptr());
+        }
+    }
     fn exec_script_setup(mut self, source: Vec<u8>) {
         unsafe {
             &self.clean_state();
