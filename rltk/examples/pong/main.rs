@@ -10,9 +10,6 @@ use pad::*;
 use state::State; 
 use component::*;
 
-pub fn teste(s: String) {
-    println!("{}", s);
-}
 
 fn main() -> RltkError {
     let context: Rltk = RltkBuilder::simple80x50()
@@ -31,7 +28,8 @@ fn main() -> RltkError {
     // resources.insert(outro_recurso);
     //
     // let ref_context = legion::borrow::AtomicRefCell::new(context);
-    resources.insert(context);
+    let key_pressed: Option<VirtualKeyCode> = None;
+    resources.insert(key_pressed);
 
     // teste(outro_recurso);
     

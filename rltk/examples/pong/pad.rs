@@ -23,14 +23,17 @@ fn move_down(transform: &mut Transform) {
 
 pub fn move_sys_build() -> Box<dyn Schedulable + 'static> {
      SystemBuilder::new("update_positions")
-         .read_resource::<Rltk>()
+         .read_resource::<Option<VirtualKeyCode>>()
          .with_query(<(Write<Transform>, Tagged<Pad>)>::query())
-         .build(|_, world, ctx, query| {
-
+         .build(|_, world, key_pressed, query| {
+        match **key_pressed{
+            None => {},
+            Some(key) => {println!("ae: {}", key as i32);}
+        };
         for (mut transform, tag) in query.iter_mut(world) {
             match tag {
                 Pad(Side::Left) => {
-                    match ctx.key {
+                    match **key_pressed {
                         Some(key) => {
                            match key {
                                VirtualKeyCode::W => move_up(&mut transform),
@@ -42,7 +45,7 @@ pub fn move_sys_build() -> Box<dyn Schedulable + 'static> {
                     }
                 },
                 Pad(Side::Right) => {
-                    match ctx.key {
+                    match **key_pressed {
                         Some(key) => {
                            match key {
                                VirtualKeyCode::Up => move_up(&mut transform),
@@ -57,6 +60,6 @@ pub fn move_sys_build() -> Box<dyn Schedulable + 'static> {
                 _ => ()
             }
         }
-        println!("_");
+        print!("");
     })
 }
