@@ -27,7 +27,7 @@ pub struct NavigationPath {
 }
 
 #[allow(dead_code)]
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 /// Node is an internal step inside the A-Star path (not exposed/public). Idx is the current cell,
 /// f is the total cost, g the neighbor cost, and h the heuristic cost.
 /// See: https://en.wikipedia.org/wiki/A*_search_algorithm
@@ -172,7 +172,7 @@ impl AStar {
             let successors = map.get_available_exits(q.idx);
 
             for s in successors {
-                if self.add_successor(q, s.0, s.1 + q.f, map) {
+                if q.idx != s.0 && self.add_successor(q, s.0, s.1 + q.f, map) {
                     let success = self.found_it();
                     return success;
                 }

@@ -1,0 +1,6 @@
+[submodule "bracket-script/cpython"]
+	path = bracket-script/cpython
+	url = https://github.com/python/cpython
+[submodule "bracket-script/lua"]
+	path = bracket-script/lua
+	url = https://github.com/lua/lua/

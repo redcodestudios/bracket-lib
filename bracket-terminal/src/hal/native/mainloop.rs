@@ -5,10 +5,7 @@ use crate::prelude::{BEvent, BTerm, GameState, BACKEND_INTERNAL, INPUT};
 use crate::{clear_input_state, Result};
 use bracket_geometry::prelude::Point;
 use glow::HasContext;
-use glutin::{
-    event::Event, event::MouseButton, event::WindowEvent,
-    event_loop::ControlFlow,
-};
+use glutin::{event::Event, event::MouseButton, event::WindowEvent, event_loop::ControlFlow};
 use std::time::Instant;
 
 const TICK_TYPE: ControlFlow = ControlFlow::Poll;
@@ -128,7 +125,7 @@ pub fn main_loop<GS: GameState>(mut bterm: BTerm, mut gamestate: GS) -> Result<(
                 );
                 wc.swap_buffers().unwrap();
                 crate::hal::fps_sleep(BACKEND.lock().frame_sleep_time, &now, prev_ms);
-            }            
+            }
             Event::LoopDestroyed => (),
             Event::WindowEvent { ref event, .. } => match event {
                 WindowEvent::Moved(physical_position) => {
@@ -287,6 +284,7 @@ fn tock<GS: GameState>(
                     0.0,
                 );
                 bi.shaders[3].setBool(be.gl.as_ref().unwrap(), "screenBurn", bterm.post_screenburn);
+                bi.shaders[3].setVec3(be.gl.as_ref().unwrap(), "screenBurnColor", bterm.screen_burn_color.r, bterm.screen_burn_color.g, bterm.screen_burn_color.b);
             } else {
                 bi.shaders[2].useProgram(be.gl.as_ref().unwrap());
             }

@@ -1,6 +1,6 @@
 [package]
 name = "bracket-geometry"
-version = "0.8.0"
+version = "0.8.1"
 authors = ["Herbert Wolverson <herberticus@gmail.com>"]
 edition = "2018"
 publish = true
@@ -13,9 +13,9 @@ categories = ["game-engines", "graphics"]
 license = "MIT"
 
 [dependencies]
-ultraviolet = "0.4.5"
-serde = { version = "1.0.106", features = ["derive"], optional = true }
+ultraviolet = "~0.4.6"
+serde = { version = "~1.0.110", features = ["derive"], optional = true }
 specs = { version = "0.16.1", optional = true }
 
 [dev-dependencies]
-crossterm = "0.17.2"
+crossterm = "~0.17.4"

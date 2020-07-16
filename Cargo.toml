@@ -1,6 +1,6 @@
 [package]
 name = "bracket-lib"
-version = "0.8.0"
+version = "0.8.1"
 authors = ["Herbert Wolverson <herberticus@gmail.com>"]
 edition = "2018"
 publish = true
@@ -18,6 +18,7 @@ exclude = [
     "bracket-noise",
     "bracket-pathfinding",
     "bracket-random",
+    "bracket-script",
     "bracket-terminal",
     "rltk",
     "screenshots"
@@ -35,13 +36,14 @@ amethyst_engine_vulkan = [ "bracket-terminal/amethyst_engine_vulkan" ]
 amethyst_engine_metal = [ "bracket-terminal/amethyst_engine_metal" ]
 
 [dependencies]
-bracket-algorithm-traits = { version = "0.8.0" }
-bracket-color = { version = "0.8.0", features = [ "rex", "palette" ] }
-bracket-geometry = { version = "0.8.0" }
-bracket-noise = { version = "0.8.0" }
-bracket-pathfinding = { version = "0.8.0" }
-bracket-random = { version = "0.8.0", features = [ "parsing" ] }
-bracket-terminal = { version = "0.8.0", default-features = false }
+bracket-algorithm-traits = { version = "~0.8.1" }
+bracket-color = { version = "~0.8.1", features = [ "rex", "palette" ] }
+bracket-geometry = { version = "~0.8.1" }
+bracket-noise = { version = "~0.8.1" }
+bracket-pathfinding = { version = "~0.8.1" }
+bracket-random = { version = "~0.8.0", features = [ "parsing" ] }
+bracket-script = { path = "bracket-script", version = "0.0.1" }
+bracket-terminal = { version = "~0.8.1", default-features = false }
 
 [workspace]
 members = [
@@ -51,6 +53,18 @@ members = [
     "bracket-noise",
     "bracket-pathfinding",
     "bracket-random",
+    "bracket-script",
     "bracket-terminal",
     "rltk"
 ]
+
+# Comment this out for releases
+[patch.crates-io]
+bracket-algorithm-traits = { path = "bracket-algorithm-traits/" }
+bracket-color = { path = "bracket-color/" }
+bracket-geometry = { path = "bracket-geometry/" }
+bracket-noise = { path = "bracket-noise/" }
+bracket-pathfinding = { path = "bracket-pathfinding/" }
+bracket-random = { path = "bracket-random/" }
+bracket-terminal = { path = "bracket-terminal/" }
+rltk = { path = "rltk/" }
